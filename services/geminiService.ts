@@ -1,13 +1,23 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
+// Safe access to API Key for browser environments where process might be undefined
+const getApiKey = () => {
+  try {
+    // @ts-ignore
+    return (typeof process !== 'undefined' && process.env?.API_KEY) || '';
+  } catch {
+    return '';
+  }
+};
+
+const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 
 // Helper to validate API key existence
 const checkApiKey = () => {
   if (!apiKey) {
     console.error("API Key is missing");
-    throw new Error("API Key is missing. Please set process.env.API_KEY.");
+    throw new Error("API Key is missing. If you are on GitHub Pages, AI features will not work without a build step injecting the key.");
   }
 };
 
